@@ -1,6 +1,4 @@
 import { validate } from "uuid";
-import { getApiKey } from "@/lib/api-key";
-import { Thread } from "@langchain/langgraph-sdk";
 import { useQueryParam, StringParam } from "use-query-params";
 import {
   createContext,
@@ -12,6 +10,7 @@ import {
   SetStateAction,
 } from "react";
 import { createClient } from "./client";
+import { Thread } from "@langchain/langgraph-sdk";
 
 interface ThreadContextType {
   getThreads: () => Promise<Thread[]>;
@@ -41,7 +40,10 @@ export function ThreadProvider({ children }: { children: ReactNode }) {
 
   const getThreads = useCallback(async (): Promise<Thread[]> => {
     if (!apiUrl || !assistantId) return [];
-    const client = createClient(apiUrl, getApiKey() ?? undefined);
+    if (!process.env.LANGSMITH_API_KEY) {
+      console.warn("LANGSMITH_API_KEY is not set");
+    }
+    const client = createClient(apiUrl, process.env.LANGSMITH_API_KEY ?? undefined);
 
     const threads = await client.threads.search({
       metadata: {

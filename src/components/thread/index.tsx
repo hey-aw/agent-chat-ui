@@ -148,10 +148,9 @@ export function Thread() {
       thread_id: threadId ?? undefined,
     } as RunnableConfig;
     stream.submit(
-      { messages: [...toolMessages, newHumanMessage] },
+      { messages: [...toolMessages, newHumanMessage], config },
       {
         streamMode: ["values"],
-        config,
         optimisticValues: (prev) => ({
           ...prev,
           messages: [
@@ -159,7 +158,6 @@ export function Thread() {
             ...toolMessages,
             newHumanMessage,
           ],
-          config,
         }),
       },
     );

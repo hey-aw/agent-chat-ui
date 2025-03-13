@@ -1,8 +1,8 @@
 import { Client } from "@langchain/langgraph-sdk";
 
-export function createClient(apiUrl: string, apiKey: string | undefined) {
+export function createClient(apiUrl: string, apiKey?: string) {
   return new Client({
-    apiKey,
     apiUrl,
+    apiKey,
   });
 }
