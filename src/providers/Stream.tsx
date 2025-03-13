@@ -82,11 +82,13 @@ const StreamSession = ({
   apiUrl,
   assistantId,
   userId,
+  apiKey,
 }: {
   children: ReactNode;
   apiUrl: string;
   assistantId: string;
   userId: string;
+  apiKey?: string;
 }) => {
   const [threadId, setThreadId] = useQueryParam("threadId", StringParam);
   const { getThreads, setThreads } = useThreads();
@@ -98,10 +100,11 @@ const StreamSession = ({
   } as RunnableConfig;
 
   const streamValue = useTypedStream({
-    apiUrl: "/api/proxy",
+    apiUrl: apiUrl,
     assistantId,
     threadId: threadId ?? null,
     userId,
+    apiKey: apiKey ?? undefined,
     config: {
       configurable: {
         user_id: userId ?? "",
@@ -121,7 +124,7 @@ const StreamSession = ({
   });
 
   useEffect(() => {
-    checkGraphStatus(apiUrl, null).then((ok) => {
+    checkGraphStatus(apiUrl, apiKey ?? null).then((ok) => {
       if (!ok) {
         toast.error("Failed to connect to LangGraph server", {
           description: () => (
@@ -135,7 +138,7 @@ const StreamSession = ({
         });
       }
     });
-  }, [apiUrl]);
+  }, [apiUrl, apiKey]);
 
   return (
     <StreamContext.Provider value={streamValue}>
@@ -260,7 +263,12 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   }
 
   return (
-    <StreamSession apiUrl={apiUrl} assistantId={assistantId} userId={userId}>
+    <StreamSession
+      apiUrl={apiUrl}
+      assistantId={assistantId}
+      userId={userId}
+      apiKey={import.meta.env.VITE_LANGSMITH_API_KEY ?? null}
+    >
       {children}
     </StreamSession>
   );
