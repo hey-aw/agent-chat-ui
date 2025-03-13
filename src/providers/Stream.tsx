@@ -157,7 +157,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [apiUrl, setApiUrl] = useQueryParam("apiUrl", StringParam);
   const [apiKey, _setApiKey] = useState(() => {
-    return getApiKey() ?? process.env.VITE_LANGSMITH_API_KEY ?? "";
+    return getApiKey() ?? process.env.LANGSMITH_API_KEY ?? "";
   });
   const [userId, setUserId] = useState(() => {
     return window.localStorage.getItem("lg:chat:userId") ?? "";
