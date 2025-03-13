@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { LangGraphLogoSVG } from "@/components/icons/langgraph";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
-// import { PasswordInput } from "@/components/ui/password-input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { getApiKey } from "@/lib/api-key";
 import { useThreads } from "./Thread";
 import { toast } from "sonner";
@@ -265,7 +265,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               />
             </div>
 
-            {/* <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="apiKey">LangSmith API Key</Label>
               <p className="text-muted-foreground text-sm">
                 This is <strong>NOT</strong> required if using a local LangGraph
@@ -280,7 +280,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
                 className="bg-background"
                 placeholder="lsv2_pt_..."
               />
-            </div> */}
+            </div>
 
             <div className="flex justify-end mt-2">
               <Button type="submit" size="lg">
