@@ -210,6 +210,22 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
             className="flex flex-col gap-6 p-6 bg-muted/50"
           >
             <div className="flex flex-col gap-2">
+              <Label htmlFor="userId">
+                User ID<span className="text-rose-500">*</span>
+              </Label>
+              <p className="text-muted-foreground text-sm">
+                Enter the email address for your Arcade AI account.
+              </p>
+              <Input
+                id="userId"
+                name="userId"
+                className="bg-background"
+                defaultValue={userId ?? "aw+test@eddolearning.com"}
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
               <Label htmlFor="apiUrl">
                 Deployment URL<span className="text-rose-500">*</span>
               </Label>
@@ -221,7 +237,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
                 id="apiUrl"
                 name="apiUrl"
                 className="bg-background"
-                defaultValue={apiUrl ?? "http://localhost:2024"}
+                defaultValue={apiUrl ?? import.meta.env.VITE_LANGGRAPH_API_URL ?? "http://localhost:2024"}
                 required
               />
             </div>
@@ -239,26 +255,11 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
                 id="assistantId"
                 name="assistantId"
                 className="bg-background"
-                defaultValue={assistantId ?? "agent"}
+                defaultValue={assistantId ?? import.meta.env.VITE_LANGGRAPH_ASSISTANT_ID ?? "agent"}
                 required
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="userId">
-                User ID<span className="text-rose-500">*</span>
-              </Label>
-              <p className="text-muted-foreground text-sm">
-                This is your unique identifier. It will be included in all requests to the LangGraph server.
-              </p>
-              <Input
-                id="userId"
-                name="userId"
-                className="bg-background"
-                defaultValue={userId ?? ""}
-                required
-              />
-            </div>
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="apiKey">LangSmith API Key</Label>
@@ -271,7 +272,8 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               <PasswordInput
                 id="apiKey"
                 name="apiKey"
-                defaultValue={apiKey ?? ""}
+                // TODO: Remove and deauthorize this key `agent-chat-ui-vercel-key` once we have a proxy for the LangSmith API
+                defaultValue={apiKey ?? import.meta.env.VITE_LANGSMITH_API_KEY ?? undefined}
                 className="bg-background"
                 placeholder="lsv2_pt_..."
               />
