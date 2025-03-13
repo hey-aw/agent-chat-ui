@@ -12,6 +12,7 @@ import { Fragment } from "react/jsx-runtime";
 import { isAgentInboxInterruptSchema } from "@/lib/agent-inbox-interrupt";
 import { ThreadView } from "../agent-inbox";
 import { BooleanParam, useQueryParam } from "use-query-params";
+import { AuthorizationHandler } from "@/components/AuthorizationHandler";
 
 function CustomComponent({
   message,
@@ -98,6 +99,9 @@ export function AssistantMessage({
   const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
   const isToolResult = message.type === "tool";
 
+  // Check if the interrupt is an authorization interrupt
+  const isAuthInterrupt = interrupt?.value?.type === "authorization";
+
   if (isToolResult && hideToolCalls) {
     return null;
   }
@@ -127,8 +131,16 @@ export function AssistantMessage({
           )}
 
           <CustomComponent message={message} thread={thread} />
-          {isAgentInboxInterruptSchema(interrupt?.value) && isLastMessage && (
-            <ThreadView interrupt={interrupt.value[0]} />
+          {isLastMessage && isAuthInterrupt && (
+            <AuthorizationHandler
+              interrupt={interrupt.value}
+              onResume={() => thread.resume()}
+              checkAuthStatus={async () => {
+                // Implement your auth status check logic here
+                // This should check if the user has completed the authorization
+                return false;
+              }}
+            />
           )}
           <div
             className={cn(
