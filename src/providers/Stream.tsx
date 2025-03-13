@@ -36,7 +36,6 @@ type StreamOptions = {
   assistantId: string;
   threadId: string | null;
   config?: RunnableConfig;
-  initialState?: StateType;
   onCustomEvent: (event: UIMessage | RemoveUIMessage, options: any) => void;
   onThreadId: (id: string) => void;
 };
@@ -105,7 +104,6 @@ const StreamSession = ({
     assistantId,
     threadId: threadId ?? null,
     config,
-    initialState: { messages: [], config },
     onCustomEvent: (event, options) => {
       options.mutate((prev: StateType) => {
         const ui = uiMessageReducer(prev.ui ?? [], event);
@@ -150,12 +148,11 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [apiUrl, setApiUrl] = useQueryParam("apiUrl", StringParam);
   const [apiKey, _setApiKey] = useState(() => {
-    return getApiKey();
+    return getApiKey() ?? import.meta.env.VITE_LANGGRAPH_API_KEY ?? "";
   });
   const [userId, setUserId] = useState(() => {
     return window.localStorage.getItem("lg:chat:userId") ?? "";
   });
-  const [, setUserIdParam] = useQueryParam("userId", StringParam);
 
   const setApiKey = (key: string) => {
     window.localStorage.setItem("lg:chat:apiKey", key);
@@ -165,7 +162,6 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   const setUserIdValue = (id: string) => {
     window.localStorage.setItem("lg:chat:userId", id);
     setUserId(id);
-    setUserIdParam(id);
   };
 
   const [assistantId, setAssistantId] = useQueryParam(
@@ -221,7 +217,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
                 id="apiUrl"
                 name="apiUrl"
                 className="bg-background"
-                defaultValue={apiUrl ?? "http://localhost:2024"}
+                defaultValue={apiUrl ?? import.meta.env.VITE_LANGGRAPH_API_URL ?? "http://localhost:2024"}
                 required
               />
             </div>
@@ -239,7 +235,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
                 id="assistantId"
                 name="assistantId"
                 className="bg-background"
-                defaultValue={assistantId ?? "agent"}
+                defaultValue={assistantId ?? import.meta.env.VITE_LANGGRAPH_ASSISTANT_ID ?? "graph"}
                 required
               />
             </div>
@@ -271,7 +267,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               <PasswordInput
                 id="apiKey"
                 name="apiKey"
-                defaultValue={apiKey ?? ""}
+                defaultValue={apiKey ?? import.meta.env.LANGSMITH_API_KEY ?? ""}
                 className="bg-background"
                 placeholder="lsv2_pt_..."
               />
