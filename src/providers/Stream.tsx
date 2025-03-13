@@ -267,7 +267,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
       apiUrl={apiUrl}
       assistantId={assistantId}
       userId={userId}
-      apiKey={import.meta.env.VITE_LANGSMITH_API_KEY ?? null}
+      apiKey={process.env.LANGSMITH_API_KEY ?? null}
     >
       {children}
     </StreamSession>
