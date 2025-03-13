@@ -40,6 +40,9 @@ export function ThreadProvider({ children }: { children: ReactNode }) {
 
   const getThreads = useCallback(async (): Promise<Thread[]> => {
     if (!apiUrl || !assistantId) return [];
+    if (!process.env.LANGSMITH_API_KEY) {
+      console.warn("LANGSMITH_API_KEY is not set");
+    }
     const client = createClient(apiUrl, process.env.LANGSMITH_API_KEY ?? undefined);
 
     const threads = await client.threads.search({
