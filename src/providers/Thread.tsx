@@ -40,7 +40,7 @@ export function ThreadProvider({ children }: { children: ReactNode }) {
 
   const getThreads = useCallback(async (): Promise<Thread[]> => {
     if (!apiUrl || !assistantId) return [];
-    const client = createClient();
+    const client = createClient(apiUrl, import.meta.env.VITE_LANGSMITH_API_KEY ?? undefined);
 
     const threads = await client.threads.search({
       metadata: {
