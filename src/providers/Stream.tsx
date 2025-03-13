@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { LangGraphLogoSVG } from "@/components/icons/langgraph";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
-import { PasswordInput } from "@/components/ui/password-input";
+// import { PasswordInput } from "@/components/ui/password-input";
 import { getApiKey } from "@/lib/api-key";
 import { useThreads } from "./Thread";
 import { toast } from "sonner";
@@ -35,9 +35,10 @@ type StreamOptions = {
   apiKey?: string;
   assistantId: string;
   threadId: string | null;
-  config?: RunnableConfig;
+  userId: string | ""
   onCustomEvent: (event: UIMessage | RemoveUIMessage, options: any) => void;
   onThreadId: (id: string) => void;
+  config?: RunnableConfig;
 };
 
 const useTypedStream = (options: StreamOptions) => {
@@ -94,8 +95,10 @@ const StreamSession = ({
   const [threadId, setThreadId] = useQueryParam("threadId", StringParam);
   const { getThreads, setThreads } = useThreads();
   const config = {
-    user_id: userId,
-    thread_id: threadId ?? undefined,
+    configurable: {
+      user_id: userId ?? "",
+      thread_id: threadId ?? undefined,
+    }
   } as RunnableConfig;
 
   const streamValue = useTypedStream({
@@ -103,7 +106,13 @@ const StreamSession = ({
     apiKey: apiKey ?? undefined,
     assistantId,
     threadId: threadId ?? null,
-    config,
+    userId,
+    config: {
+      configurable: {
+        user_id: userId ?? "",
+        thread_id: threadId ?? undefined,
+      }
+    },
     onCustomEvent: (event, options) => {
       options.mutate((prev: StateType) => {
         const ui = uiMessageReducer(prev.ui ?? [], event);
@@ -256,7 +265,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               />
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col gap-2">
               <Label htmlFor="apiKey">LangSmith API Key</Label>
               <p className="text-muted-foreground text-sm">
                 This is <strong>NOT</strong> required if using a local LangGraph
@@ -271,7 +280,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
                 className="bg-background"
                 placeholder="lsv2_pt_..."
               />
-            </div>
+            </div> */}
 
             <div className="flex justify-end mt-2">
               <Button type="submit" size="lg">
