@@ -18,8 +18,6 @@ import { Button } from "@/components/ui/button";
 import { LangGraphLogoSVG } from "@/components/icons/langgraph";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
-import { PasswordInput } from "@/components/ui/password-input";
-import { getApiKey } from "@/lib/api-key";
 import { useThreads } from "./Thread";
 import { toast } from "sonner";
 import { RunnableConfig } from "@langchain/core/runnables";
@@ -81,13 +79,11 @@ async function checkGraphStatus(
 
 const StreamSession = ({
   children,
-  apiKey,
   apiUrl,
   assistantId,
   userId,
 }: {
   children: ReactNode;
-  apiKey: string | null;
   apiUrl: string;
   assistantId: string;
   userId: string;
@@ -102,8 +98,7 @@ const StreamSession = ({
   } as RunnableConfig;
 
   const streamValue = useTypedStream({
-    apiUrl,
-    apiKey: apiKey ?? undefined,
+    apiUrl: "/api/proxy",
     assistantId,
     threadId: threadId ?? null,
     userId,
@@ -121,20 +116,17 @@ const StreamSession = ({
     },
     onThreadId: (id) => {
       setThreadId(id);
-      // Refetch threads list when thread ID changes.
-      // Wait for some seconds before fetching so we're able to get the new thread that was created.
       sleep().then(() => getThreads().then(setThreads).catch(console.error));
     },
   });
 
   useEffect(() => {
-    checkGraphStatus(apiUrl, apiKey).then((ok) => {
+    checkGraphStatus(apiUrl, null).then((ok) => {
       if (!ok) {
         toast.error("Failed to connect to LangGraph server", {
           description: () => (
             <p>
-              Please ensure your graph is running at <code>{apiUrl}</code> and
-              your API key is correctly set (if connecting to a deployed graph).
+              Please ensure your graph is running at <code>{apiUrl}</code>.
             </p>
           ),
           duration: 10000,
@@ -143,7 +135,7 @@ const StreamSession = ({
         });
       }
     });
-  }, [apiKey, apiUrl]);
+  }, [apiUrl]);
 
   return (
     <StreamContext.Provider value={streamValue}>
@@ -156,17 +148,9 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [apiUrl, setApiUrl] = useQueryParam("apiUrl", StringParam);
-  const [apiKey, _setApiKey] = useState(() => {
-    return getApiKey() ?? process.env.LANGSMITH_API_KEY ?? "";
-  });
   const [userId, setUserId] = useState(() => {
     return window.localStorage.getItem("lg:chat:userId") ?? "";
   });
-
-  const setApiKey = (key: string) => {
-    window.localStorage.setItem("lg:chat:apiKey", key);
-    _setApiKey(key);
-  };
 
   const setUserIdValue = (id: string) => {
     window.localStorage.setItem("lg:chat:userId", id);
@@ -202,11 +186,9 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               const formData = new FormData(form);
               const apiUrl = formData.get("apiUrl") as string;
               const assistantId = formData.get("assistantId") as string;
-              const apiKey = formData.get("apiKey") as string;
               const userId = formData.get("userId") as string;
 
               setApiUrl(apiUrl);
-              setApiKey(apiKey);
               setAssistantId(assistantId);
               setUserIdValue(userId);
 
@@ -265,23 +247,6 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="apiKey">LangSmith API Key</Label>
-              <p className="text-muted-foreground text-sm">
-                This is <strong>NOT</strong> required if using a local LangGraph
-                server. This value is stored in your browser's local storage and
-                is only used to authenticate requests sent to your LangGraph
-                server.
-              </p>
-              <PasswordInput
-                id="apiKey"
-                name="apiKey"
-                defaultValue={apiKey ?? import.meta.env.LANGSMITH_API_KEY ?? ""}
-                className="bg-background"
-                placeholder="lsv2_pt_..."
-              />
-            </div>
-
             <div className="flex justify-end mt-2">
               <Button type="submit" size="lg">
                 Continue
@@ -295,7 +260,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   }
 
   return (
-    <StreamSession apiKey={apiKey} apiUrl={apiUrl} assistantId={assistantId} userId={userId}>
+    <StreamSession apiUrl={apiUrl} assistantId={assistantId} userId={userId}>
       {children}
     </StreamSession>
   );
