@@ -12,7 +12,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PanelRightOpen, PanelRightClose, Settings } from "lucide-react";
+import { PanelRightOpen, PanelRightClose, Settings, X } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { AgentConfig } from "@/components/agent-config";
 import { Separator } from "@/components/ui/separator";
@@ -237,18 +237,35 @@ export default function ThreadHistory() {
 
             {/* Settings Panel */}
             <Drawer open={settingsOpen} onOpenChange={setSettingsOpen}>
-              <DrawerContent>
-                <div className="mx-auto w-full max-w-sm">
-                  <DrawerHeader>
-                    <DrawerTitle>Agent Settings</DrawerTitle>
-                  </DrawerHeader>
-                  <div className="px-4">
-                    <AgentConfig config={config} onChange={handleConfigChange} />
+              <DrawerContent className="h-[85vh]">
+                <DrawerHeader className="flex-none border-b px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <DrawerTitle>Agent Settings</DrawerTitle>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Configure your AI assistant's behavior
+                      </p>
+                    </div>
+                    <DrawerClose asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </DrawerClose>
                   </div>
-                  <DrawerFooter className="pt-2">
+                </DrawerHeader>
+                <div className="px-6 py-4 overflow-y-auto flex-1">
+                  <AgentConfig config={config} onChange={handleConfigChange} />
+                </div>
+                <DrawerFooter className="flex-none border-t px-6 py-4">
+                  <div className="flex justify-end">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
+                      className="text-muted-foreground hover:text-foreground"
                       onClick={() => {
                         const defaultConfig = getDefaultConfig();
                         handleConfigChange(defaultConfig);
@@ -259,11 +276,8 @@ export default function ThreadHistory() {
                     >
                       Reset to Defaults
                     </Button>
-                    <DrawerClose asChild>
-                      <Button variant="outline" size="sm">Close</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </div>
+                  </div>
+                </DrawerFooter>
               </DrawerContent>
             </Drawer>
           </div>
@@ -296,18 +310,35 @@ export default function ThreadHistory() {
 
             {/* Settings Panel for Mobile */}
             <Drawer open={settingsOpen} onOpenChange={setSettingsOpen}>
-              <DrawerContent>
-                <div className="mx-auto w-full max-w-sm">
-                  <DrawerHeader>
-                    <DrawerTitle>Agent Settings</DrawerTitle>
-                  </DrawerHeader>
-                  <div className="px-4">
-                    <AgentConfig config={config} onChange={handleConfigChange} />
+              <DrawerContent className="h-[85vh]">
+                <DrawerHeader className="flex-none border-b px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <DrawerTitle>Agent Settings</DrawerTitle>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Configure your AI assistant's behavior
+                      </p>
+                    </div>
+                    <DrawerClose asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </DrawerClose>
                   </div>
-                  <DrawerFooter className="pt-2">
+                </DrawerHeader>
+                <div className="px-6 py-4 overflow-y-auto flex-1">
+                  <AgentConfig config={config} onChange={handleConfigChange} />
+                </div>
+                <DrawerFooter className="flex-none border-t px-6 py-4">
+                  <div className="flex justify-end">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
+                      className="text-muted-foreground hover:text-foreground"
                       onClick={() => {
                         const defaultConfig = getDefaultConfig();
                         handleConfigChange(defaultConfig);
@@ -318,11 +349,8 @@ export default function ThreadHistory() {
                     >
                       Reset to Defaults
                     </Button>
-                    <DrawerClose asChild>
-                      <Button variant="outline" size="sm">Close</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </div>
+                  </div>
+                </DrawerFooter>
               </DrawerContent>
             </Drawer>
           </SheetContent>
